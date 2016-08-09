@@ -1,7 +1,19 @@
 to setup
   clear-all
-  create-turtles 100 [ setxy random-xcor random-ycor ]
+  setup-patches
+  setup-turtles
   reset-ticks
+end
+
+; setup the colors of the patches
+to setup-patches
+  ask patches [ set pcolor green ]
+end
+
+; setup the turtles
+to setup-turtles
+  create-turtles 100
+  ask turtles [ setxy random-xcor random-ycor ]
 end
 
 to go
