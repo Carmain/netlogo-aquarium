@@ -16,8 +16,20 @@ to setup-turtles
   ask turtles [ setxy random-xcor random-ycor ]
 end
 
+turtles-own [energy]
+
+to eat-grass
+  ask turtles [
+    if pcolor = green [
+      set pcolor black
+      set energy energy + 10
+    ]
+  ]
+end
+
 to go
   move-turtles
+  eat-grass
   tick
 end
 
