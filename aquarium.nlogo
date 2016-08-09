@@ -24,13 +24,40 @@ to eat-grass
       set pcolor black
       set energy energy + 10
     ]
+  ifelse show-energy?
+    [ set label energy ]
+    [ set label "" ]
   ]
 end
 
 to go
   move-turtles
   eat-grass
+  reproduce
+  check-death
+  regrow-grass
   tick
+end
+
+to reproduce
+  ask turtles [
+    if energy > 50 [
+      set energy energy - 50
+      hatch 1 [ set energy 50 ]
+    ]
+  ]
+end
+
+to check-death
+  ask turtles [
+    if energy <= 0 [ die ]
+  ]
+end
+
+to regrow-grass
+  ask patches [
+    if random 100 < 3 [ set pcolor green ]
+  ]
 end
 
 to move-turtles
@@ -124,6 +151,17 @@ count patches with [pcolor = green]
 17
 1
 11
+
+SWITCH
+34
+125
+168
+158
+show-energy?
+show-energy?
+0
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
