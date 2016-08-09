@@ -38,6 +38,7 @@ to move-turtles
   ask turtles [
     right random 360
     forward 1
+    set energy energy - 1
   ]
 end
 @#$#@#$#@
@@ -69,9 +70,9 @@ ticks
 30.0
 
 BUTTON
-45
+10
 15
-108
+73
 48
 NIL
 setup
@@ -86,9 +87,9 @@ NIL
 1
 
 BUTTON
-109
+74
 15
-172
+137
 48
 NIL
 go
@@ -101,6 +102,28 @@ NIL
 NIL
 NIL
 0
+
+MONITOR
+11
+55
+94
+100
+NIL
+count turtles
+17
+1
+11
+
+MONITOR
+99
+55
+193
+100
+Green patches
+count patches with [pcolor = green]
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
