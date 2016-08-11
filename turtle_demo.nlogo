@@ -1,3 +1,74 @@
+to setup
+  clear-all
+  setup-patches
+  setup-turtles
+  reset-ticks
+end
+
+; setup the colors of the patches
+to setup-patches
+  ask patches [ set pcolor green ]
+end
+
+; setup the turtles
+to setup-turtles
+  create-turtles number-of-turtles
+  ask turtles [ setxy random-xcor random-ycor ]
+end
+
+turtles-own [energy]
+
+to eat-grass
+  ask turtles [
+    if pcolor = green [
+      set pcolor black
+      set energy (energy + energy-from-grass)
+    ]
+    ifelse show-energy?
+      [ set label energy ]
+      [ set label "" ]
+  ]
+end
+
+to go
+  if ticks >= 500 [ stop ]
+  move-turtles
+  eat-grass
+  check-death
+  reproduce
+  regrow-grass
+  tick
+end
+
+to reproduce
+  ask turtles [
+    if energy > birth-energy [
+      set energy energy - birth-energy
+      hatch 1 [ set energy birth-energy ]
+    ]
+  ]
+end
+
+to check-death
+  ask turtles [
+    if energy <= 0 [ die ]
+  ]
+end
+
+to regrow-grass
+  ask patches [
+    if random 100 < 3 [ set pcolor green ]
+  ]
+end
+
+to move-turtles
+  ; says that each turtle should run the commands in the brackets.
+  ask turtles [
+    right random 360
+    forward 1
+    set energy energy - 1
+  ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
@@ -20,11 +91,142 @@ GRAPHICS-WINDOW
 16
 -16
 16
-0
-0
+1
+1
 1
 ticks
 30.0
+
+BUTTON
+10
+15
+73
+48
+NIL
+setup
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+74
+15
+137
+48
+NIL
+go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+0
+
+MONITOR
+11
+55
+94
+100
+NIL
+count turtles
+17
+1
+11
+
+MONITOR
+99
+55
+193
+100
+Green patches
+count patches with [pcolor = green]
+17
+1
+11
+
+SWITCH
+10
+104
+144
+137
+show-energy?
+show-energy?
+1
+1
+-1000
+
+PLOT
+9
+140
+209
+290
+Totals
+time
+totals
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"turtles" 1.0 0 -16777216 true "" "plot count turtles"
+"grass" 1.0 0 -14439633 true "" "plot count patches with [pcolor = green]"
+
+SLIDER
+24
+303
+196
+336
+number-of-turtles
+number-of-turtles
+0
+100
+8
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+24
+337
+196
+370
+energy-from-grass
+energy-from-grass
+0
+100
+10
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+24
+374
+196
+407
+birth-energy
+birth-energy
+0
+100
+36
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
