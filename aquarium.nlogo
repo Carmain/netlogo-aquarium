@@ -1,24 +1,38 @@
+breed [vegans vegan] ;; vegans fishes
+
 to setup
   clear-all
   setup-background
+  setup-vegan-fishes
   reset-ticks
 end
 
-; setup the color of the background (gravels)
+;; Setup the color of the background (gravels)
 to setup-background
   ask patches [
     set pcolor grey + (random-float 0.8) - 0.4
   ]
 end
 
+to setup-vegan-fishes
+  create-vegans number-of-vegan
+  set-default-shape vegans "fish"
+  ask vegans [
+    setxy random-xcor random-ycor
+    set color blue
+  ]
+end
+
 
 
 to go
-  regrow-seaweed
+  grow-alga
+  move-vegan-fish
   tick
 end
 
-to regrow-seaweed
+;; Grows a number of algae defined by a slider
+to grow-alga
   ask patches [
     if count(patches with [pcolor = green]) < number-of-seaweed [
       if random 100 > 3 [
@@ -26,6 +40,19 @@ to regrow-seaweed
       ]
     ]
   ]
+end
+
+to move-vegan-fish
+  ask vegans [
+    move
+  ]
+end
+
+
+to move  ;; turtle procedure
+  right random 50
+  left random 50
+  forward 1
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -98,7 +125,22 @@ number-of-seaweed
 number-of-seaweed
 0
 100
-22
+89
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+21
+114
+193
+147
+number-of-vegan
+number-of-vegan
+1
+20
+9
 1
 1
 NIL

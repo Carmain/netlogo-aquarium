@@ -53,11 +53,49 @@ end
 ;; Grows a number of algae defined by a slider
 to grow-alga
   ask patches [
-    if count(patches with [pcolor = green]) < number-of-seaweed [
+    if count(patches with [pcolor = green]) < number-of-alga [
       if random 100 > 3 [
         set pcolor green
       ]
     ]
   ]
+end
+```
+
+#### Apparition des végératiens
+
+##### Déplacements
+
+Afin de les manipuler le plus facilement possible, nous allons nommer nos tortues végératiens à l'aide de `breed` :
+```
+breed [vegans vegan] ;; vegans fishes
+```
+
+Une procédure appelée dans `setup` permet ensuite leur initialisation avec un nombre défini selon un slider :
+
+```
+to setup-vegan-fishes
+  create-vegans number-of-vegan
+  set-default-shape vegans "fish"
+  ask vegans [
+    setxy random-xcor random-ycor
+    set color blue
+  ]
+end
+```
+
+Leurs déplacements sont regulés via une autre procédure appelée dans `go` :
+```
+to move-vegan-fish
+  ask vegans [
+    move
+  ]
+end
+
+
+to move
+  right random 50
+  left random 50
+  forward 1
 end
 ```
