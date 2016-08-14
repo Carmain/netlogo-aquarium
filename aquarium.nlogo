@@ -1,5 +1,7 @@
 breed [vegans vegan] ;; vegans fishes
 
+vegans-own [energy]
+
 to setup
   clear-all
   setup-background
@@ -20,15 +22,17 @@ to setup-vegan-fishes
   set-default-shape vegans "fish"
   ask vegans [
     setxy random-xcor random-ycor
+    set energy 50
     set color blue
   ]
 end
 
-
+;; ##########################################################
 
 to go
   grow-alga
   move-vegan-fish
+  check-death
   eat-alga
   tick
 end
@@ -45,11 +49,19 @@ to eat-alga
   ask vegans [
     if pcolor = green [
       display-gravels
+      set energy (energy + energy-from-alga)
       grow
     ]
   ]
 end
 
+to check-death
+  ask vegans [
+    if energy <= 0 [ die ]
+  ]
+end
+
+;; ##########################################################
 
 to grow-alga
   ask patches [
@@ -78,6 +90,7 @@ to move
   right random 50
   left random 50
   forward 0.5
+  set energy energy - 1
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -173,9 +186,9 @@ HORIZONTAL
 
 SLIDER
 21
-210
+155
 193
-243
+188
 max-fish-size
 max-fish-size
 1
@@ -188,9 +201,9 @@ HORIZONTAL
 
 SLIDER
 21
-242
+187
 193
-275
+220
 fish-grow
 fish-grow
 0
@@ -200,6 +213,39 @@ fish-grow
 1
 NIL
 HORIZONTAL
+
+SLIDER
+21
+234
+193
+267
+energy-from-alga
+energy-from-alga
+0
+100
+3
+1
+1
+NIL
+HORIZONTAL
+
+PLOT
+5
+287
+205
+437
+Statistics
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -14070903 true "" "plot count vegans"
 
 @#$#@#$#@
 ## WHAT IS IT?
