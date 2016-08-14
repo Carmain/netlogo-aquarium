@@ -69,7 +69,7 @@ end
 ;; Display algae in the aquarium
 to grow-alga
   ask patches [
-    if count(patches with [pcolor = green]) < number-of-alga [
+    if count(patches with [pcolor = green]) < number-of-algae [
       if random 100 > 3 [
         set pcolor green
       ]
@@ -164,11 +164,11 @@ SLIDER
 75
 193
 108
-number-of-alga
-number-of-alga
+number-of-algae
+number-of-algae
 0
 100
-48
+50
 1
 1
 NIL
@@ -183,7 +183,7 @@ number-of-vegan
 number-of-vegan
 1
 20
-9
+10
 1
 1
 NIL
@@ -228,7 +228,7 @@ energy-from-alga
 energy-from-alga
 0
 100
-3
+50
 1
 1
 NIL

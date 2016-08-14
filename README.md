@@ -99,3 +99,13 @@ to move
   forward 1
 end
 ```
+
+## Valeurs par défaut pour les paramètres :
+
+| Titre                          | paramètre          | valeur |
+|--------------------------------|--------------------|--------|
+| Nombre d'algues                | `number-of-algae`  | 50     |
+| Nombre de poissons végératiens | `number-of-vegans` | 10     |
+| Taille maximale des poissons   | `max-fish-size`    | 2      |
+| Croissance des poissons        | `fish-grow`        | 0.1    |
+| Energie venant des algues      | `enery-from-alga`  | 50     |
