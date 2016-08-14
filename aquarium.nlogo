@@ -67,8 +67,8 @@ end
 
 to grow
   let fish-size size
-  if fish-size < 2 [ ;; Could be a slider
-    set size fish-size + 0.1 ;; Could be a slider
+  if fish-size < max-fish-size [
+    set size fish-size + fish-grow
   ]
 end
 
@@ -157,15 +157,45 @@ HORIZONTAL
 
 SLIDER
 21
-114
+108
 193
-147
+141
 number-of-vegan
 number-of-vegan
 1
 20
 9
 1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+21
+210
+193
+243
+max-fish-size
+max-fish-size
+1
+5
+2
+0.1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+21
+242
+193
+275
+fish-grow
+fish-grow
+0
+1
+0.1
+0.1
 1
 NIL
 HORIZONTAL
