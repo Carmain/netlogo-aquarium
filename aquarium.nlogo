@@ -10,7 +10,7 @@ end
 ;; Setup the color of the background (gravels)
 to setup-background
   ask patches [
-    set pcolor grey + (random-float 0.8) - 0.4
+    display-gravels
   ]
 end
 
@@ -53,16 +53,22 @@ end
 to eat-alga
   ask vegans [
     if pcolor = green [
-      set pcolor grey + (random-float 0.8) - 0.4
+      display-gravels
       grow
     ]
   ]
 end
 
+
+to display-gravels
+  set pcolor grey + (random-float 0.8) - 0.4
+end
+
+
 to grow
   let fish-size size
-  if fish-size < 2 [
-    set size fish-size + 0.1
+  if fish-size < 2 [ ;; Could be a slider
+    set size fish-size + 0.1 ;; Could be a slider
   ]
 end
 
