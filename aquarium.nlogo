@@ -3,6 +3,7 @@ breed [vegans vegan] ;; vegans fishes
 to setup
   clear-all
   setup-background
+  grow-alga
   setup-vegan-fishes
   reset-ticks
 end
@@ -32,16 +33,6 @@ to go
   tick
 end
 
-;; Grows a number of algae defined by a slider
-to grow-alga
-  ask patches [
-    if count(patches with [pcolor = green]) < number-of-alga [
-      if random 100 > 3 [
-        set pcolor green
-      ]
-    ]
-  ]
-end
 
 to move-vegan-fish
   ask vegans [
@@ -59,6 +50,16 @@ to eat-alga
   ]
 end
 
+
+to grow-alga
+  ask patches [
+    if count(patches with [pcolor = green]) < number-of-alga [
+      if random 100 > 3 [
+        set pcolor green
+      ]
+    ]
+  ]
+end
 
 to display-gravels
   set pcolor grey + (random-float 0.8) - 0.4
