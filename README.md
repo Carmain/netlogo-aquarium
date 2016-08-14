@@ -36,7 +36,7 @@ to setup
   reset-ticks
 end
 
-; Setup the color of the background (gravels)
+;; Setup the color of the background (gravels)
 to setup-background
   ask patches [
     set pcolor grey + (random-float 0.8) - 0.4
@@ -46,12 +46,12 @@ end
 
 
 to go
-  regrow-seaweed
+  grow-alga
   tick
 end
 
-; Grows a number of algae defined by a slider
-to regrow-seaweed
+;; Grows a number of algae defined by a slider
+to grow-alga
   ask patches [
     if count(patches with [pcolor = green]) < number-of-seaweed [
       if random 100 > 3 [
