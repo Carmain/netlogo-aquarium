@@ -50,18 +50,27 @@ to move-vegan-fish
 end
 
 
-to move
-  right random 50
-  left random 50
-  forward 0.5
-end
-
 to eat-alga
   ask vegans [
     if pcolor = green [
       set pcolor grey + (random-float 0.8) - 0.4
+      grow
     ]
   ]
+end
+
+to grow
+  let fish-size size
+  if fish-size < 2 [
+    set size fish-size + 0.1
+  ]
+end
+
+
+to move
+  right random 50
+  left random 50
+  forward 0.5
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
