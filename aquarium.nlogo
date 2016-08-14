@@ -31,6 +31,7 @@ end
 ;; ##########################################################
 
 to go
+  if not any? turtles [ stop ]
   grow-alga
   move-vegan-fish
   check-death
