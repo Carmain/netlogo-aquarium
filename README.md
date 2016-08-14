@@ -100,6 +100,52 @@ to move
 end
 ```
 
+##### Recherche de nourriture & reproduction
+
+Le comportement des poissons se défini de la sorte :
+ * A chaque repas, le poisson gagne de l'énergie
+ * Manger le fait aussi grandir jusqu'à obtenir sa taille maximale
+ * Si le poisson est suffisament grand, il obtient la capacité de se reproduire
+ * Si le poisson a suffisament d'énergie pour se reproduire, il le fait (la reproduction cependant lui en fait perdre).
+ * Si le poisson n'a plus d'énergie, il meurt.
+
+Le poisson grandi et gagne de l'énergie à chaque repas :
+```
+to eat-alga
+  ask vegans [
+    if pcolor = green [
+      display-gravels
+      set energy (energy + energy-from-alga)
+      grow
+    ]
+  ]
+end
+```
+
+Si le poisson est suffisament grand, il peux se reproduire. De plus, la reproduction coûte de l'énergie :
+```
+to reproduce
+  ask vegans [
+    if energy > birth-energy and size >= max-fish-size  [
+      set energy energy - birth-energy
+      hatch 1 [
+        set energy birth-energy
+        set size 1
+      ]
+    ]
+  ]
+end
+```
+
+Si le poisson n'a plus d'énergie, il meurt :
+```
+to check-death
+  ask vegans [
+    if energy <= 0 [ die ]
+  ]
+end
+```
+
 ## Valeurs par défaut pour les paramètres :
 
 | Titre                          | paramètre          | valeur |
@@ -108,4 +154,5 @@ end
 | Nombre de poissons végératiens | `number-of-vegans` | 10     |
 | Taille maximale des poissons   | `max-fish-size`    | 2      |
 | Croissance des poissons        | `fish-grow`        | 0.1    |
-| Energie venant des algues      | `enery-from-alga`  | 50     |
+| Energie venant des algues      | `enery-from-alga`  | 40     |
+| Energie à la naissance         | `birth-enery`      | 50     |

@@ -34,6 +34,7 @@ to go
   grow-alga
   move-vegan-fish
   check-death
+  reproduce
   eat-alga
   tick
 end
@@ -53,6 +54,18 @@ to eat-alga
       display-gravels
       set energy (energy + energy-from-alga)
       grow
+    ]
+  ]
+end
+
+to reproduce
+  ask vegans [
+    if energy > birth-energy and size >= max-fish-size  [
+      set energy energy - birth-energy
+      hatch 1 [
+        set energy birth-energy
+        set size 1
+      ]
     ]
   ]
 end
@@ -228,17 +241,17 @@ energy-from-alga
 energy-from-alga
 0
 100
-50
+40
 1
 1
 NIL
 HORIZONTAL
 
 PLOT
-5
-287
-205
-437
+6
+478
+206
+628
 Statistics
 NIL
 NIL
@@ -250,7 +263,23 @@ true
 false
 "" ""
 PENS
-"default" 1.0 0 -14070903 true "" "plot count vegans"
+"vegans" 1.0 0 -14070903 true "" "plot count vegans"
+"algae" 1.0 0 -15040220 true "" "plot count patches with [pcolor = green]"
+
+SLIDER
+21
+268
+193
+301
+birth-energy
+birth-energy
+0
+100
+50
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
