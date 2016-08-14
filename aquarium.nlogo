@@ -1,3 +1,32 @@
+to setup
+  clear-all
+  setup-background
+  reset-ticks
+end
+
+; setup the color of the background (gravels)
+to setup-background
+  ask patches [
+    set pcolor grey + (random-float 0.8) - 0.4
+  ]
+end
+
+
+
+to go
+  regrow-seaweed
+  tick
+end
+
+to regrow-seaweed
+  ask patches [
+    if count(patches with [pcolor = green]) < number-of-seaweed [
+      if random 100 > 3 [
+        set pcolor green
+      ]
+    ]
+  ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
@@ -25,6 +54,55 @@ GRAPHICS-WINDOW
 1
 ticks
 30.0
+
+BUTTON
+21
+35
+85
+68
+Setup
+setup
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+85
+35
+148
+68
+Go
+go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+21
+75
+193
+108
+number-of-seaweed
+number-of-seaweed
+0
+100
+22
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
