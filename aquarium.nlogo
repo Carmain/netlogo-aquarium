@@ -28,13 +28,14 @@ end
 to go
   grow-alga
   move-vegan-fish
+  eat-alga
   tick
 end
 
 ;; Grows a number of algae defined by a slider
 to grow-alga
   ask patches [
-    if count(patches with [pcolor = green]) < number-of-seaweed [
+    if count(patches with [pcolor = green]) < number-of-alga [
       if random 100 > 3 [
         set pcolor green
       ]
@@ -49,10 +50,18 @@ to move-vegan-fish
 end
 
 
-to move  ;; turtle procedure
+to move
   right random 50
   left random 50
-  forward 1
+  forward 0.5
+end
+
+to eat-alga
+  ask vegans [
+    if pcolor = green [
+      set pcolor grey + (random-float 0.8) - 0.4
+    ]
+  ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -121,11 +130,11 @@ SLIDER
 75
 193
 108
-number-of-seaweed
-number-of-seaweed
+number-of-alga
+number-of-alga
 0
 100
-89
+48
 1
 1
 NIL
