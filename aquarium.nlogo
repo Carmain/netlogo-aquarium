@@ -17,6 +17,7 @@ to setup-background
   ]
 end
 
+;; Create the vegans fishes
 to setup-vegan-fishes
   create-vegans number-of-vegan
   set-default-shape vegans "fish"
@@ -38,13 +39,14 @@ to go
 end
 
 
+;; Move the vegan fishes
 to move-vegan-fish
   ask vegans [
     move
   ]
 end
 
-
+;; The vegan fishes could eat algae, gain energy & grow
 to eat-alga
   ask vegans [
     if pcolor = green [
@@ -55,6 +57,7 @@ to eat-alga
   ]
 end
 
+;; If the energy if equals or below 0, the fish die
 to check-death
   ask vegans [
     if energy <= 0 [ die ]
@@ -63,6 +66,7 @@ end
 
 ;; ##########################################################
 
+;; Display algae in the aquarium
 to grow-alga
   ask patches [
     if count(patches with [pcolor = green]) < number-of-alga [
@@ -73,19 +77,20 @@ to grow-alga
   ]
 end
 
+;; If the patch doesn't own an alga, display some gravels (grey patch)
 to display-gravels
   set pcolor grey + (random-float 0.8) - 0.4
 end
 
-
+;; Make fishes grow
 to grow
-  let fish-size size
-  if fish-size < max-fish-size [
-    set size fish-size + fish-grow
+  if size < max-fish-size [
+    set size size + fish-grow
   ]
 end
 
 
+;; Move the fishes
 to move
   right random 50
   left random 50
