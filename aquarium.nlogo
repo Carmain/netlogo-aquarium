@@ -1,12 +1,14 @@
 breed [vegans vegan] ;; vegans fishes
+breed [carnivorous a-carnivorous] ;; carnivorous fishes
 
 vegans-own [energy]
+carnivorous-own [energy]
 
 to setup
   clear-all
   setup-background
   grow-alga
-  setup-vegan-fishes
+  setup-fishes
   reset-ticks
 end
 
@@ -17,14 +19,23 @@ to setup-background
   ]
 end
 
-;; Create the vegans fishes
-to setup-vegan-fishes
-  create-vegans number-of-vegan
+;; Create the fishes
+to setup-fishes
+  create-vegans number-of-vegans
   set-default-shape vegans "fish"
   ask vegans [
     setxy random-xcor random-ycor
     set energy 50
     set color blue
+  ]
+
+  create-carnivorous number-of-carnivorous
+  set-default-shape carnivorous "fish"
+  ask carnivorous [
+    setxy random-xcor random-ycor
+    set energy 50
+    set size 1.2
+    set color red
   ]
 end
 
@@ -33,18 +44,21 @@ end
 to go
   if not any? turtles [ stop ]
   grow-alga
-  move-vegan-fish
   check-death
+  move-fishes
   reproduce
   eat-alga
   tick
 end
 
 
-;; Move the vegan fishes
-to move-vegan-fish
-  ask vegans [
-    move
+;; Move the fishes
+to move-fishes
+  ask turtles [
+    right random 50
+    left random 50
+    forward 0.5
+    set energy energy - 1
   ]
 end
 
