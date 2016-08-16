@@ -185,10 +185,10 @@ ticks
 30.0
 
 BUTTON
-21
-35
-85
-68
+5
+11
+69
+44
 Setup
 setup
 NIL
@@ -202,10 +202,10 @@ NIL
 1
 
 BUTTON
-85
-35
-148
-68
+69
+11
+132
+44
 Go
 go
 T
@@ -219,29 +219,29 @@ NIL
 1
 
 SLIDER
-21
-75
-193
-108
+6
+56
+178
+89
 number-of-algae
 number-of-algae
 0
-100
+300
 50
-1
+2
 1
 NIL
 HORIZONTAL
 
 SLIDER
-21
-108
-193
-141
-number-of-vegan
-number-of-vegan
+6
+89
+178
+122
+number-of-vegans
+number-of-vegans
 1
-20
+40
 10
 1
 1
@@ -249,10 +249,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-21
-155
-193
-188
+7
+165
+179
+198
 max-fish-size
 max-fish-size
 1
@@ -264,10 +264,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-21
-187
-193
-220
+7
+197
+179
+230
 fish-grow
 fish-grow
 0
@@ -279,10 +279,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-21
-234
-193
-267
+7
+244
+179
+277
 energy-from-alga
 energy-from-alga
 0
@@ -294,10 +294,10 @@ NIL
 HORIZONTAL
 
 PLOT
-6
-478
-206
-628
+12
+511
+240
+661
 Statistics
 NIL
 NIL
@@ -311,12 +311,13 @@ false
 PENS
 "vegans" 1.0 0 -14070903 true "" "plot count vegans"
 "algae" 1.0 0 -15040220 true "" "plot count patches with [pcolor = green]"
+"pen-2" 1.0 0 -2674135 true "" "plot count carnivorous"
 
 SLIDER
-21
-268
-193
-301
+7
+278
+179
+311
 birth-energy
 birth-energy
 0
@@ -326,6 +327,64 @@ birth-energy
 1
 NIL
 HORIZONTAL
+
+BUTTON
+132
+11
+203
+44
+Record
+make-movie
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+6
+122
+178
+155
+number-of-carnivorous
+number-of-carnivorous
+0
+10
+0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+7
+311
+179
+344
+energy-from-fish
+energy-from-fish
+0
+100
+20
+1
+1
+NIL
+HORIZONTAL
+
+SWITCH
+18
+366
+160
+399
+fishes-could-die
+fishes-could-die
+0
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
