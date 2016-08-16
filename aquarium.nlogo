@@ -41,6 +41,27 @@ end
 
 ;; ##########################################################
 
+;; Create a movie
+to make-movie
+
+  ;; prompt user for movie location
+  user-message "First, save your new movie file (choose a name ending with .mov)"
+  let path user-new-file
+  if not is-string? path [ stop ]  ;; stop if user canceled
+
+  ;; run the model
+  setup
+  movie-start path
+  while [ticks < 500] [
+    movie-grab-view
+    go
+  ]
+
+  ;; Stop and export the movie
+  movie-close
+  user-message (word "Exported movie to " path)
+end
+
 to go
   if not any? turtles [ stop ]
   grow-alga
