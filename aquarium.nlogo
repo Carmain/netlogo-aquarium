@@ -354,7 +354,7 @@ number-of-carnivorous
 number-of-carnivorous
 0
 10
-0
+2
 1
 1
 NIL
@@ -382,7 +382,7 @@ SWITCH
 399
 fishes-could-die
 fishes-could-die
-0
+1
 1
 -1000
 
