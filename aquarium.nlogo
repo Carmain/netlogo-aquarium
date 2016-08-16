@@ -44,10 +44,13 @@ end
 to go
   if not any? turtles [ stop ]
   grow-alga
-  check-death
   move-fishes
+  if fishes-could-die [
+    check-death
+  ]
   reproduce
   eat-alga
+  eat-fish
   tick
 end
 
@@ -73,10 +76,26 @@ to eat-alga
   ]
 end
 
+to eat-fish
+  ask carnivorous [
+    let carnivorous-size size
+    let vegan-eaten 0
+    ask vegans in-radius 2 [
+      if carnivorous-size >= size [
+        set vegan-eaten vegan-eaten + 1
+        die
+      ]
+    ]
+    set energy energy + energy-from-fish * vegan-eaten
+    grow
+  ]
+
+end
+
 to reproduce
-  ask vegans [
+  ask turtles [
     if energy > birth-energy and size >= max-fish-size  [
-      set energy energy - birth-energy
+      set energy energy / 2
       hatch 1 [
         set energy birth-energy
         set size 1
@@ -87,7 +106,7 @@ end
 
 ;; If the energy if equals or below 0, the fish die
 to check-death
-  ask vegans [
+  ask turtles [
     if energy <= 0 [ die ]
   ]
 end
@@ -115,15 +134,6 @@ to grow
   if size < max-fish-size [
     set size size + fish-grow
   ]
-end
-
-
-;; Move the fishes
-to move
-  right random 50
-  left random 50
-  forward 0.5
-  set energy energy - 1
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
