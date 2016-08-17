@@ -26,7 +26,7 @@ to setup-fishes
   ask vegans [
     setxy random-xcor random-ycor
     set energy 50
-    set color blue
+    set color 102 + random 4
   ]
 
   create-carnivorous number-of-carnivorous
@@ -35,7 +35,7 @@ to setup-fishes
     setxy random-xcor random-ycor
     set energy 50
     set size 1.2
-    set color red
+    set color 14 + random 4
   ]
 end
 
