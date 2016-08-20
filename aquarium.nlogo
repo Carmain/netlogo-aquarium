@@ -100,15 +100,17 @@ end
 to eat-fish
   ask carnivorous [
     let carnivorous-size size
+    let energy-gained 0
     let vegan-eaten 0
-    ask vegans in-radius 2 [
+    ask vegans in-radius 1 [
       if carnivorous-size >= size [
         set vegan-eaten vegan-eaten + 1
+        set energy-gained energy-from-fish * vegan-eaten
+        grow
         die
       ]
     ]
-    set energy energy + energy-from-fish * vegan-eaten
-    grow
+    set energy energy + energy-gained
   ]
 
 end
