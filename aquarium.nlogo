@@ -155,7 +155,7 @@ end
 ;; Make fishes grow
 to grow
   if size < max-fish-size [
-    set size size + fish-grow
+    set size size + 0.1
   ]
 end
 @#$#@#$#@
@@ -267,21 +267,6 @@ HORIZONTAL
 
 SLIDER
 7
-197
-179
-230
-fish-grow
-fish-grow
-0
-1
-0.1
-0.1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-7
 244
 179
 277
@@ -385,7 +370,7 @@ SWITCH
 fishes-could-die
 fishes-could-die
 1
-1
+0
 -1000
 
 @#$#@#$#@
