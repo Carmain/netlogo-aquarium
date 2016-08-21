@@ -28,6 +28,7 @@ to setup-fishes
     setxy random-xcor random-ycor
     set energy 50
     set age 0
+    set size 2
     set color 102 + random 4
   ]
 
@@ -36,7 +37,7 @@ to setup-fishes
   ask carnivorous [
     setxy random-xcor random-ycor
     set energy 50
-    set size 1.2
+    set size 2.2
     set age 0
     set color 14 + random 4
   ]
@@ -48,7 +49,7 @@ to setup-algae
   ask algae [
     setxy random-xcor random-ycor
     set color 63
-    set size 1.3
+    set size 2.3
    ]
 end
 
@@ -170,7 +171,7 @@ to give-birth
     if random-float 100 < 3 [
       set energy (energy / 2)
       hatch 1 [
-        set size 1
+        set size 2
         right random-float 360
         forward 1
       ]
@@ -186,11 +187,11 @@ end
 GRAPHICS-WINDOW
 210
 10
-779
-470
-21
-16
-13.0
+646
+467
+30
+30
+7.0
 1
 10
 1
@@ -200,10 +201,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--21
-21
--16
-16
+-30
+30
+-30
+30
 1
 1
 1
@@ -283,7 +284,7 @@ max-fish-size
 max-fish-size
 1
 5
-2
+4
 0.1
 1
 NIL
@@ -393,7 +394,7 @@ SWITCH
 370
 fishes-could-die
 fishes-could-die
-1
+0
 1
 -1000
 
