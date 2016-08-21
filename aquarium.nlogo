@@ -118,15 +118,20 @@ to eat-fish
     let carnivorous-size size
     let energy-gained 0
     let vegan-eaten 0
+    let food-eaten false
     ask vegans in-radius 1 [
       if carnivorous-size >= size [
         set vegan-eaten vegan-eaten + 1
         set energy-gained energy-from-fish * vegan-eaten
-        grow
+        set food-eaten true
         die
       ]
     ]
-    set energy energy + energy-gained
+
+    if food-eaten = true [
+      set energy energy + energy-gained
+      grow
+    ]
   ]
 
 end
@@ -148,7 +153,7 @@ end
 to move
   right random 50
   left random 50
-  forward 0.1
+  forward 0.3
   set energy energy - 1
 end
 
