@@ -153,6 +153,7 @@ end
 to move
   right random 50
   left random 50
+  if not can-move? 1 [ rt 180 ]
   forward 0.3
   set energy energy - 0.25
 end
