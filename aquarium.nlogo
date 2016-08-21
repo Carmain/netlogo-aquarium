@@ -1,13 +1,14 @@
 breed [vegans vegan] ;; vegans fishes
 breed [carnivorous a-carnivorous] ;; carnivorous fishes
+breed [algae alga]
 
-vegans-own [energy]
-carnivorous-own [energy]
+vegans-own [energy age]
+carnivorous-own [energy age]
 
 to setup
   clear-all
   setup-background
-  grow-alga
+  setup-algae
   setup-fishes
   reset-ticks
 end
@@ -15,7 +16,7 @@ end
 ;; Setup the color of the background (gravels)
 to setup-background
   ask patches [
-    display-gravels
+    set pcolor grey + (random-float 0.8) - 0.4
   ]
 end
 
@@ -26,6 +27,7 @@ to setup-fishes
   ask vegans [
     setxy random-xcor random-ycor
     set energy 50
+    set age 0
     set color 102 + random 4
   ]
 
@@ -35,8 +37,19 @@ to setup-fishes
     setxy random-xcor random-ycor
     set energy 50
     set size 1.2
+    set age 0
     set color 14 + random 4
   ]
+end
+
+to setup-algae
+  create-algae number-of-algae
+  set-default-shape algae "plant"
+  ask algae [
+    setxy random-xcor random-ycor
+    set color 63
+    set size 1.3
+   ]
 end
 
 ;; ##########################################################
@@ -63,8 +76,6 @@ to make-movie
 end
 
 to go
-  if not any? turtles [ stop ]
-  grow-alga
   move-fishes
   if fishes-could-die [
     check-death
@@ -72,26 +83,31 @@ to go
   reproduce
   eat-alga
   eat-fish
+  if not any? vegans or not any? carnivorous [ stop ]
   tick
 end
 
 
 ;; Move the fishes
 to move-fishes
-  ask turtles [
-    right random 50
-    left random 50
-    forward 0.5
-    set energy energy - 1
-  ]
+  ask vegans [move]
+  ask carnivorous [move]
 end
 
 ;; The vegan fishes could eat algae, gain energy & grow
 to eat-alga
   ask vegans [
-    if pcolor = green [
-      display-gravels
-      set energy (energy + energy-from-alga)
+    let food-eaten false
+    ask algae in-radius 1 [
+      hatch 1 [
+        setxy random-xcor random-ycor
+      ]
+      set food-eaten true
+      die
+    ]
+
+    if food-eaten = true [
+      set energy energy + energy-from-alga
       grow
     ]
   ]
@@ -116,40 +132,24 @@ to eat-fish
 end
 
 to reproduce
-  ask turtles [
-    if energy > birth-energy and size >= max-fish-size  [
-      set energy energy / 2
-      hatch 1 [
-        set energy birth-energy
-        set size 1
-      ]
-    ]
-  ]
+  ask vegans [give-birth]
+  ask carnivorous [give-birth]
 end
 
 ;; If the energy if equals or below 0, the fish die
 to check-death
-  ask turtles [
-    if energy <= 0 [ die ]
-  ]
+  ask vegans [dead-tired]
+  ask carnivorous [dead-tired]
 end
 
 ;; ##########################################################
 
-;; Display algae in the aquarium
-to grow-alga
-  ask patches [
-    if count(patches with [pcolor = green]) < number-of-algae [
-      if random 100 > 3 [
-        set pcolor green
-      ]
-    ]
-  ]
-end
-
-;; If the patch doesn't own an alga, display some gravels (grey patch)
-to display-gravels
-  set pcolor grey + (random-float 0.8) - 0.4
+;; Move the fishes
+to move
+  right random 50
+  left random 50
+  forward 0.1
+  set energy energy - 1
 end
 
 ;; Make fishes grow
@@ -157,6 +157,21 @@ to grow
   if size < max-fish-size [
     set size size + 0.1
   ]
+end
+
+to give-birth
+  if energy > birth-energy and size >= max-fish-size  [
+    set energy energy / 2
+    hatch 1 [
+      set energy birth-energy
+      set size 1
+    ]
+  ]
+end
+
+;; If the fish no longer have any energy
+to dead-tired
+  if energy <= 0 [ die ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -180,8 +195,8 @@ GRAPHICS-WINDOW
 16
 -16
 16
-0
-0
+1
+1
 1
 ticks
 30.0
@@ -297,7 +312,7 @@ false
 "" ""
 PENS
 "vegans" 1.0 0 -14070903 true "" "plot count vegans"
-"algae" 1.0 0 -15040220 true "" "plot count patches with [pcolor = green]"
+"algae" 1.0 0 -15040220 true "" "plot count algae"
 "pen-2" 1.0 0 -2674135 true "" "plot count carnivorous"
 
 SLIDER
@@ -370,7 +385,7 @@ SWITCH
 fishes-could-die
 fishes-could-die
 1
-0
+1
 -1000
 
 @#$#@#$#@
@@ -640,6 +655,19 @@ Polygon -7500403 true true 135 105 90 60 45 45 75 105 135 135
 Polygon -7500403 true true 165 105 165 135 225 105 255 45 210 60
 Polygon -7500403 true true 135 90 120 45 150 15 180 45 165 90
 
+shark
+false
+0
+Polygon -7500403 true true 283 153 288 149 271 146 301 145 300 138 247 119 190 107 104 117 54 133 39 134 10 99 9 112 19 142 9 175 10 185 40 158 69 154 64 164 80 161 86 156 132 160 209 164
+Polygon -7500403 true true 199 161 152 166 137 164 169 154
+Polygon -7500403 true true 188 108 172 83 160 74 156 76 159 97 153 112
+Circle -16777216 true false 256 129 12
+Line -16777216 false 222 134 222 150
+Line -16777216 false 217 134 217 150
+Line -16777216 false 212 134 212 150
+Polygon -7500403 true true 78 125 62 118 63 130
+Polygon -7500403 true true 121 157 105 161 101 156 106 152
+
 sheep
 false
 15
@@ -680,6 +708,23 @@ Circle -16777216 true false 30 30 240
 Circle -7500403 true true 60 60 180
 Circle -16777216 true false 90 90 120
 Circle -7500403 true true 120 120 60
+
+tile stones
+false
+0
+Polygon -7500403 true true 0 240 45 195 75 180 90 165 90 135 45 120 0 135
+Polygon -7500403 true true 300 240 285 210 270 180 270 150 300 135 300 225
+Polygon -7500403 true true 225 300 240 270 270 255 285 255 300 285 300 300
+Polygon -7500403 true true 0 285 30 300 0 300
+Polygon -7500403 true true 225 0 210 15 210 30 255 60 285 45 300 30 300 0
+Polygon -7500403 true true 0 30 30 0 0 0
+Polygon -7500403 true true 15 30 75 0 180 0 195 30 225 60 210 90 135 60 45 60
+Polygon -7500403 true true 0 105 30 105 75 120 105 105 90 75 45 75 0 60
+Polygon -7500403 true true 300 60 240 75 255 105 285 120 300 105
+Polygon -7500403 true true 120 75 120 105 105 135 105 165 165 150 240 150 255 135 240 105 210 105 180 90 150 75
+Polygon -7500403 true true 75 300 135 285 195 300
+Polygon -7500403 true true 30 285 75 285 120 270 150 270 150 210 90 195 60 210 15 255
+Polygon -7500403 true true 180 285 240 255 255 225 255 195 240 165 195 165 150 165 135 195 165 210 165 255
 
 tree
 false
