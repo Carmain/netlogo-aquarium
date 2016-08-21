@@ -165,11 +165,14 @@ to grow
 end
 
 to give-birth
-  if energy > birth-energy and size >= max-fish-size  [
-    set energy energy / 2
-    hatch 1 [
-      set energy birth-energy
-      set size 1
+  if size >= max-fish-size  [
+    if random-float 100 < 3 [
+      set energy (energy / 2)
+      hatch 1 [
+        set size 1
+        right random-float 360
+        forward 1
+      ]
     ]
   ]
 end
