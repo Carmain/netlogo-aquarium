@@ -106,7 +106,7 @@ to eat-alga
       die
     ]
 
-    if food-eaten = true [
+    if food-eaten [
       set energy energy + energy-from-alga
       grow
     ]
@@ -120,7 +120,7 @@ to eat-fish
     let vegan-eaten 0
     let food-eaten false
     ask vegans in-radius 1 [
-      if carnivorous-size >= size [
+      if carnivorous-size >= size or hungry-carnivorous [
         set vegan-eaten vegan-eaten + 1
         set energy-gained energy-from-fish * vegan-eaten
         set food-eaten true
@@ -128,7 +128,7 @@ to eat-fish
       ]
     ]
 
-    if food-eaten = true [
+    if food-eaten [
       set energy energy + energy-gained
       grow
     ]
@@ -287,9 +287,9 @@ HORIZONTAL
 
 SLIDER
 7
-244
+215
 179
-277
+248
 energy-from-alga
 energy-from-alga
 0
@@ -322,9 +322,9 @@ PENS
 
 SLIDER
 7
-278
+249
 179
-311
+282
 birth-energy
 birth-energy
 0
@@ -369,9 +369,9 @@ HORIZONTAL
 
 SLIDER
 7
-311
+282
 179
-344
+315
 energy-from-fish
 energy-from-fish
 0
@@ -384,12 +384,23 @@ HORIZONTAL
 
 SWITCH
 18
-366
+337
 160
-399
+370
 fishes-could-die
 fishes-could-die
 1
+1
+-1000
+
+SWITCH
+18
+370
+160
+403
+hungry-carnivorous
+hungry-carnivorous
+0
 1
 -1000
 
