@@ -1,3 +1,7 @@
+patches-own [
+ chemical ;; amount of chemical on this patch
+]
+
 breed [vegans vegan] ;; vegans fishes
 breed [carnivorous a-carnivorous] ;; carnivorous fishes
 breed [algae alga]
@@ -84,6 +88,7 @@ to go
   reproduce
   eat-alga
   eat-fish
+
   if not any? vegans or not any? carnivorous [ stop ]
   tick
 end
@@ -93,6 +98,25 @@ end
 to move-fishes
   ask vegans [move]
   ask carnivorous [move]
+
+  ;; Each patch diffuses "diffusion-rate / 100" of its variable
+  ;; chemical to its neighboring 8 patches. Thus,
+  ;; each patch gets 1/8 of 50% of the chemical
+  ;; from each neighboring patch.)
+  diffuse chemical (diffusion-rate / 100)
+
+
+  ask patches [
+    ;; Slowly evaporate chemical. On each turn,
+    ;; the patch loses "evaporation-rate" (in percent)
+    ;; of the value of smell.
+    set chemical chemical * (100 - evaporation-rate) / 100
+
+    ;; Reports a shade of "green" proportional to the value of "chemical".
+    ;; If "chemical" is less than "0.1", then the darkest shade of color is chosen.
+    ;; If "chemical" is greater than 5, then the lightest shade of color is chosen.
+    set pcolor scale-color green chemical 0.1 5
+  ]
 end
 
 ;; The vegan fishes could eat algae, gain energy & grow
@@ -157,7 +181,9 @@ to move
   if not can-move? 1 [ rt 180 ]
   forward 0.3
   set energy energy - 0.25
+  set chemical 60
 end
+
 
 ;; Make fishes grow
 to grow
@@ -187,8 +213,8 @@ end
 GRAPHICS-WINDOW
 210
 10
-646
-467
+647
+468
 30
 30
 7.0
@@ -291,10 +317,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-7
-215
-179
-248
+14
+301
+186
+334
 energy-from-alga
 energy-from-alga
 0
@@ -326,10 +352,10 @@ PENS
 "pen-2" 1.0 0 -2674135 true "" "plot count carnivorous"
 
 SLIDER
-7
-249
-179
-282
+14
+335
+186
+368
 birth-energy
 birth-energy
 0
@@ -373,10 +399,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-7
-282
-179
-315
+14
+368
+186
+401
 energy-from-fish
 energy-from-fish
 0
@@ -388,26 +414,56 @@ NIL
 HORIZONTAL
 
 SWITCH
-18
-337
-160
-370
+25
+423
+167
+456
 fishes-could-die
 fishes-could-die
-0
+1
 1
 -1000
 
 SWITCH
-18
-370
-160
-403
+25
+456
+167
+489
 hungry-carnivorous
 hungry-carnivorous
 0
 1
 -1000
+
+SLIDER
+7
+200
+179
+233
+diffusion-rate
+diffusion-rate
+0
+100
+11
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+7
+233
+179
+266
+evaporation-rate
+evaporation-rate
+0
+100
+11
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
