@@ -1,10 +1,16 @@
 patches-own [
- chemical ;; amount of chemical on this patch
+ ;; amount of traks on this patch
+ carnivorous-trak
+ vegans-trak
+ algae-trak
+
+ chemical ;; Just for the show
 ]
 
 breed [vegans vegan] ;; vegans fishes
 breed [carnivorous a-carnivorous] ;; carnivorous fishes
 breed [algae alga]
+
 
 vegans-own [energy age]
 carnivorous-own [energy age]
@@ -78,11 +84,35 @@ to make-movie
 end
 
 to go
-  ask turtles [
-    set chemical 60
-  ]
-  move-vegans
   move-carnivorous
+  move-vegans
+
+  ask algae [
+    set algae-trak 60
+  ]
+
+  ask patches [
+    ;; Slowly evaporate chemical. On each turn,
+    ;; the patch loses "evaporation-rate" (in percent)
+    ;; of the value of smell.
+    set carnivorous-trak carnivorous-trak * (100 - evaporation-rate) / 100
+    set vegans-trak vegans-trak * (100 - evaporation-rate) / 100
+    set algae-trak algae-trak * (100 - evaporation-rate) / 100
+
+    ;; Reports a shade of "green" proportional to the value of "chemical".
+    ;; If "chemical" is less than "0.1", then the darkest shade of color is chosen.
+    ;; If "chemical" is greater than 5, then the lightest shade of color is chosen.
+    ;;set pcolor scale-color blue carnivorous-trak 0.1 5
+  ]
+
+  ;; Each patch diffuses "diffusion-rate / 100" of its variable
+  ;; chemical to its neighboring 8 patches. Thus,
+  ;; each patch gets 1/8 of 50% of the chemical
+  ;; from each neighboring patch.)
+  diffuse vegans-trak (diffusion-rate / 100)
+  diffuse carnivorous-trak (diffusion-rate / 100)
+  diffuse algae-trak (diffusion-rate / 100)
+
   if fishes-could-die [
     check-death
   ]
@@ -99,50 +129,17 @@ end
 to move-vegans
   ask vegans [
     move
+    set vegans-trak 60
   ]
-
-  ask patches [
-    ;; Reports a shade of "green" proportional to the value of "chemical".
-    ;; If "chemical" is less than "0.1", then the darkest shade of color is chosen.
-    ;; If "chemical" is greater than 5, then the lightest shade of color is chosen.
-    set pcolor scale-color blue chemical 0.1 5
-
-    ;; Slowly evaporate chemical. On each turn,
-    ;; the patch loses "evaporation-rate" (in percent)
-    ;; of the value of smell.
-    set chemical chemical * (100 - evaporation-rate) / 100
-  ]
-
-  ;; Each patch diffuses "diffusion-rate / 100" of its variable
-  ;; chemical to its neighboring 8 patches. Thus,
-  ;; each patch gets 1/8 of 50% of the chemical
-  ;; from each neighboring patch.)
-  diffuse chemical (diffusion-rate / 100)
 end
 
 ;; Move the fishes
 to move-carnivorous
   ask carnivorous [
     move
+    set carnivorous-trak 60
   ]
 
-  ask patches [
-    ;; Reports a shade of "green" proportional to the value of "chemical".
-    ;; If "chemical" is less than "0.1", then the darkest shade of color is chosen.
-    ;; If "chemical" is greater than 5, then the lightest shade of color is chosen.
-    set pcolor scale-color red chemical 0.1 5
-
-    ;; Slowly evaporate chemical. On each turn,
-    ;; the patch loses "evaporation-rate" (in percent)
-    ;; of the value of smell.
-    set chemical chemical * (100 - evaporation-rate) / 100
-  ]
-
-  ;; Each patch diffuses "diffusion-rate / 100" of its variable
-  ;; chemical to its neighboring 8 patches. Thus,
-  ;; each patch gets 1/8 of 50% of the chemical
-  ;; from each neighboring patch.)
-  diffuse chemical (diffusion-rate / 100)
 end
 
 ;; The vegan fishes could eat algae, gain energy & grow
@@ -236,9 +233,9 @@ to dead-tired
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
+209
 10
-647
+646
 468
 30
 30
