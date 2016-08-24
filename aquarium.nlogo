@@ -78,7 +78,11 @@ to make-movie
 end
 
 to go
-  move-fishes
+  ask turtles [
+    set chemical 60
+  ]
+  move-vegans
+  move-carnivorous
   if fishes-could-die [
     check-death
   ]
@@ -92,28 +96,53 @@ end
 
 
 ;; Move the fishes
-to move-fishes
-  ask vegans [move]
-  ask carnivorous [move]
+to move-vegans
+  ask vegans [
+    move
+  ]
+
+  ask patches [
+    ;; Reports a shade of "green" proportional to the value of "chemical".
+    ;; If "chemical" is less than "0.1", then the darkest shade of color is chosen.
+    ;; If "chemical" is greater than 5, then the lightest shade of color is chosen.
+    set pcolor scale-color blue chemical 0.1 5
+
+    ;; Slowly evaporate chemical. On each turn,
+    ;; the patch loses "evaporation-rate" (in percent)
+    ;; of the value of smell.
+    set chemical chemical * (100 - evaporation-rate) / 100
+  ]
 
   ;; Each patch diffuses "diffusion-rate / 100" of its variable
   ;; chemical to its neighboring 8 patches. Thus,
   ;; each patch gets 1/8 of 50% of the chemical
   ;; from each neighboring patch.)
   diffuse chemical (diffusion-rate / 100)
+end
 
+;; Move the fishes
+to move-carnivorous
+  ask carnivorous [
+    move
+  ]
 
   ask patches [
+    ;; Reports a shade of "green" proportional to the value of "chemical".
+    ;; If "chemical" is less than "0.1", then the darkest shade of color is chosen.
+    ;; If "chemical" is greater than 5, then the lightest shade of color is chosen.
+    set pcolor scale-color red chemical 0.1 5
+
     ;; Slowly evaporate chemical. On each turn,
     ;; the patch loses "evaporation-rate" (in percent)
     ;; of the value of smell.
     set chemical chemical * (100 - evaporation-rate) / 100
-
-    ;; Reports a shade of "green" proportional to the value of "chemical".
-    ;; If "chemical" is less than "0.1", then the darkest shade of color is chosen.
-    ;; If "chemical" is greater than 5, then the lightest shade of color is chosen.
-    set pcolor scale-color green chemical 0.1 5
   ]
+
+  ;; Each patch diffuses "diffusion-rate / 100" of its variable
+  ;; chemical to its neighboring 8 patches. Thus,
+  ;; each patch gets 1/8 of 50% of the chemical
+  ;; from each neighboring patch.)
+  diffuse chemical (diffusion-rate / 100)
 end
 
 ;; The vegan fishes could eat algae, gain energy & grow
@@ -178,7 +207,6 @@ to move
   if not can-move? 1 [ rt 180 ]
   forward 0.3
   set energy energy - 0.25
-  set chemical 60
 end
 
 
@@ -441,7 +469,7 @@ diffusion-rate
 diffusion-rate
 0
 100
-11
+20
 1
 1
 NIL
@@ -456,7 +484,7 @@ evaporation-rate
 evaporation-rate
 0
 100
-11
+10
 1
 1
 NIL
