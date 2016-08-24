@@ -26,9 +26,8 @@ end
 
 ;; Create the fishes
 to setup-fishes
-  create-vegans number-of-vegans
   set-default-shape vegans "fish 2"
-  ask vegans [
+  create-vegans number-of-vegans [
     setxy random-xcor random-ycor
     set energy 50
     set age 0
@@ -36,9 +35,8 @@ to setup-fishes
     set color 102 + random 4
   ]
 
-  create-carnivorous number-of-carnivorous
   set-default-shape carnivorous "fish"
-  ask carnivorous [
+  create-carnivorous number-of-carnivorous [
     setxy random-xcor random-ycor
     set energy 50
     set size 2.2
@@ -48,9 +46,8 @@ to setup-fishes
 end
 
 to setup-algae
-  create-algae number-of-algae
   set-default-shape algae "plant"
-  ask algae [
+  create-algae number-of-algae [
     setxy random-xcor random-ycor
     set color 63
     set size 2.3
