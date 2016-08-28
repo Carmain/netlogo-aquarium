@@ -7,12 +7,12 @@ patches-own [
  chemical ;; Just for the show
 ]
 
-breed [vegans vegan] ;; vegans fishes
-breed [carnivorous a-carnivorous] ;; carnivorous fishes
-breed [algae alga]
+breed [ vegans vegan ] ;; vegans fishes
+breed [ carnivorous a-carnivorous ] ;; carnivorous fishes
+breed [ algae alga ]
 
-vegans-own [energy age]
-carnivorous-own [energy age]
+vegans-own [ energy age ]
+carnivorous-own [ energy age ]
 
 to setup
   clear-all
@@ -46,26 +46,25 @@ to setup-fishes
   ]
 end
 
-to setup-algae
-  set-default-shape algae "plant"
-  create-algae number-of-algae [
-    setxy random-xcor random-ycor
-    set color 63
-    set size 2.3
-   ]
-end
-
 to basic-fishes-setup
   setxy random-xcor random-ycor
   set energy birth-energy
   set age 0
 end
 
+to setup-algae
+  set-default-shape algae "plant"
+  create-algae number-of-algae [
+    setxy random-xcor random-ycor
+    set color 63
+    set size 2.3
+  ]
+end
+
 ;; ##########################################################
 
 ;; Create a movie
 to make-movie
-
   ;; prompt user for movie location
   user-message "First, save your new movie file (choose a name ending with .mov)"
   let path user-new-file
@@ -85,12 +84,52 @@ to make-movie
 end
 
 to go
-  move-carnivorous
-  move-vegans
+  move-fishes
+  set-tracks
+  check-death
+  reproduce
 
-  ask algae [
-    set algae-track 60
+  if not any? vegans or not any? carnivorous [ stop ]
+
+  tick
+end
+
+
+to move-fishes
+  ;; Move the carnivorous fishes
+  ask carnivorous [
+    ifelse energy < 25
+      [
+        hunt-vegans
+        forward 0.5
+        eat-fish
+      ]
+      [
+        walk-around
+        forward 0.3
+      ]
+    if not can-move? 1 [ rt 180 ]
+    effort-result
   ]
+
+  ;; Move the vegans fishes
+  ask vegans [
+    ifelse energy < 25
+      [
+        hunt-algae
+        eat-alga
+      ]
+      [
+        walk-around
+      ]
+    forward 0.3
+    if not can-move? 1 [ rt 180 ]
+    effort-result
+  ]
+end
+
+to set-tracks
+  ask algae [ set algae-track 60 ]
 
   ask patches [
     ;; Slowly evaporate chemical. On each turn,
@@ -107,53 +146,67 @@ to go
   diffuse vegans-track (diffusion-rate / 100)
   diffuse carnivorous-track (diffusion-rate / 100)
   diffuse algae-track (diffusion-rate / 100)
-
-  if fishes-could-die [
-    check-death
-  ]
-  reproduce
-
-  if not any? vegans or not any? carnivorous [ stop ]
-  tick
 end
 
+to reproduce
+  ask vegans [ give-birth 2 102 ]
+  ask carnivorous [ give-birth 2.2 14 ]
+end
 
-;; Move the vegans fishes
-to move-vegans
-  ask vegans [
-    ifelse energy < 25
-      [
-        hunt-algae
-        eat-alga
-      ]
-      [
-        walk-around
-      ]
-    forward 0.3
-    if not can-move? 1 [ rt 180 ]
-    set energy energy - 0.25
-    set vegans-track 60
+;; If the energy if equals or below 0, the fish die
+to check-death
+  ask vegans [ dead-tired ]
+  ask carnivorous [ dead-tired ]
+end
+
+;; ##########################################################
+;;                   MOVE, HUNT & EAT
+;; ##########################################################
+
+to hunt-algae
+  let track-ahead algae-track-at-angle 0
+  let track-right algae-track-at-angle 45
+  let track-left algae-track-at-angle -45
+  fix-position-with-tracks track-left track-ahead track-right
+end
+
+to hunt-vegans
+  let track-ahead vegans-track-at-angle 0
+  let track-right vegans-track-at-angle 45
+  let track-left vegans-track-at-angle -45
+  fix-position-with-tracks track-left track-ahead track-right
+end
+
+to fix-position-with-tracks [track-left track-ahead track-right]
+  if (track-right > track-ahead) or (track-left > track-ahead)
+  [
+    ifelse track-right > track-left
+      [ right 45 ]
+      [ left 45 ]
   ]
 end
 
-;; Move the carnivorous fishes
-to move-carnivorous
-  ask carnivorous [
-    ifelse energy < 25
-      [
-        hunt-vegans
-        forward 0.5
-        eat-fish
-      ]
-      [
-        walk-around
-        forward 0.3
-      ]
-    if not can-move? 1 [ rt 180 ]
-    set energy energy - 0.25
-    set carnivorous-track 60
-  ]
+to-report algae-track-at-angle [angle]
+  let p patch-right-and-ahead angle 1
+  if p = nobody [ report 0 ]
+  report [ algae-track ] of p
+end
 
+to-report vegans-track-at-angle [angle]
+  let p patch-right-and-ahead angle 1
+  if p = nobody [ report 0 ]
+  report [ vegans-track ] of p
+end
+
+;; If the fishes don't hunt, they need to go somewhere
+to walk-around
+  right random 50
+  left random 50
+end
+
+to effort-result
+  set energy energy - 0.25
+  set vegans-track 60
 end
 
 ;; The vegan fishes could eat algae, gain energy & grow
@@ -161,9 +214,7 @@ to eat-alga
   ask vegans [
     let food-eaten false
     ask algae in-radius 1 [
-      hatch 1 [
-        setxy random-xcor random-ycor
-      ]
+      hatch 1 [ setxy random-xcor random-ycor ]
       set food-eaten true
       die
     ]
@@ -195,68 +246,7 @@ to eat-fish
       grow
     ]
   ]
-
 end
-
-to reproduce
-  ask vegans [give-birth 2 102]
-  ask carnivorous [give-birth 2.2 14]
-end
-
-;; If the energy if equals or below 0, the fish die
-to check-death
-  ask vegans [dead-tired]
-  ask carnivorous [dead-tired]
-end
-
-;; ##########################################################
-
-;; Set a random color from a range for the fishes
-to random-in-range-color [initial-color]
-  set color initial-color + random 4
-end
-
-;; If the fishes don't hunt, they need to go somewhere
-to walk-around
-  right random 50
-  left random 50
-end
-to hunt-algae
-  let track-ahead algae-track-at-angle 0
-  let track-right algae-track-at-angle 45
-  let track-left algae-track-at-angle -45
-  fix-position-with-tracks track-left track-ahead track-right
-end
-
-to hunt-vegans
-  let track-ahead vegans-track-at-angle 0
-  let track-right vegans-track-at-angle 45
-  let track-left vegans-track-at-angle -45
-  fix-position-with-tracks track-left track-ahead track-right
-end
-
-to fix-position-with-tracks [track-left track-ahead track-right]
-  if (track-right > track-ahead) or (track-left > track-ahead)
-  [
-    ifelse track-right > track-left
-      [ right 45 ]
-      [ left 45 ]
-  ]
-end
-
-to-report algae-track-at-angle [angle]
-  let p patch-right-and-ahead angle 1
-  if p = nobody [ report 0 ]
-  report [algae-track] of p
-end
-
-to-report vegans-track-at-angle [angle]
-  let p patch-right-and-ahead angle 1
-  if p = nobody [ report 0 ]
-  report [vegans-track] of p
-end
-
-
 
 ;; Make fishes grow
 to grow
@@ -265,6 +255,15 @@ to grow
   ]
 end
 
+;; ##########################################################
+;; ##########################################################
+
+;; Set a random color from a range for the fishes
+to random-in-range-color [ initial-color ]
+  set color initial-color + random 4
+end
+
+;; Create babies from a parent
 to give-birth [initial-size initial-color]
   if size >= max-fish-size  [
     if random-float 100 < 3 [
@@ -282,7 +281,11 @@ end
 
 ;; If the fish no longer have any energy
 to dead-tired
-  if energy <= 0 [ die ]
+  if energy <= 0 [
+    ifelse fishes-could-die
+      [ die ]
+      [ set energy 0 ]
+  ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -408,8 +411,8 @@ HORIZONTAL
 
 PLOT
 12
-511
-240
+508
+300
 661
 Statistics
 NIL
@@ -419,12 +422,11 @@ NIL
 0.0
 10.0
 true
-false
+true
 "" ""
 PENS
 "vegans" 1.0 0 -14070903 true "" "plot count vegans"
-"algae" 1.0 0 -15040220 true "" "plot count algae"
-"pen-2" 1.0 0 -2674135 true "" "plot count carnivorous"
+"carnivorous" 1.0 0 -2674135 true "" "plot count carnivorous"
 
 SLIDER
 14
