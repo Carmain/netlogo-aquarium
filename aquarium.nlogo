@@ -52,6 +52,7 @@ to basic-fishes-setup
   set age 0
 end
 
+;; Create the algae
 to setup-algae
   set-default-shape algae "plant"
   create-algae number-of-algae [
@@ -63,7 +64,6 @@ end
 
 ;; ##########################################################
 
-;; Create a movie
 to make-movie
   ;; prompt user for movie location
   user-message "First, save your new movie file (choose a name ending with .mov)"
@@ -92,7 +92,6 @@ to go
   if not any? vegans or not any? carnivorous [ stop ]
   tick
 end
-
 
 to move-fishes
   ;; Move the vegans fishes
@@ -154,7 +153,6 @@ to reproduce
   ask carnivorous [ give-birth 2.2 14 ]
 end
 
-;; If the energy if equals or below 0, the fish die
 to check-death
   ask vegans [ dead-tired ]
   ask carnivorous [ dead-tired ]
@@ -164,6 +162,7 @@ end
 ;;                   MOVE, HUNT & EAT
 ;; ##########################################################
 
+;; We look for some tracks of algae around it
 to hunt-algae
   let track-ahead algae-track-at-angle 0
   let track-right algae-track-at-angle 45
@@ -171,6 +170,7 @@ to hunt-algae
   fix-position-with-tracks track-left track-ahead track-right
 end
 
+;; We look for some tracks of vegans fishes around it
 to hunt-vegans
   let track-ahead vegans-track-at-angle 0
   let track-right vegans-track-at-angle 45
@@ -178,6 +178,7 @@ to hunt-vegans
   fix-position-with-tracks track-left track-ahead track-right
 end
 
+;; Adjust the position of the fish when it found some tracks
 to fix-position-with-tracks [track-left track-ahead track-right]
   if (track-right > track-ahead) or (track-left > track-ahead)
   [
@@ -199,13 +200,12 @@ to-report vegans-track-at-angle [angle]
   report [ vegans-track ] of p
 end
 
-;; If the fishes don't hunt, they need to go somewhere
+;; If the fish don't hunt, it needs to go somewhere
 to walk-around
   right random 50
   left random 50
 end
 
-;; The vegan fishes could eat algae, gain energy & grow
 to eat-alga
   ask vegans [
     let food-eaten false
@@ -216,6 +216,7 @@ to eat-alga
     ]
 
     if food-eaten [
+      ;; Gain energy from food
       set energy energy + energy-from-alga
       grow
     ]
@@ -229,22 +230,20 @@ to eat-fish
     let vegan-eaten 0
     let food-eaten false
     ask vegans in-radius 1 [
-      if carnivorous-size >= size or hungry-carnivorous [
-        set vegan-eaten vegan-eaten + 1
-        set energy-gained energy-from-fish * vegan-eaten
-        set food-eaten true
-        die
-      ]
+      set vegan-eaten vegan-eaten + 1
+      set energy-gained energy-from-fish * vegan-eaten
+      set food-eaten true
+      die
     ]
 
     if food-eaten [
+      ;; Gain energy from food
       set energy energy + energy-gained
       grow
     ]
   ]
 end
 
-;; Make fishes grow
 to grow
   if size < max-fish-size [ set size size + 0.1 ]
 end
@@ -276,7 +275,8 @@ end
 ;; If the fish no longer have any energy
 to dead-tired
   if energy <= 0 [
-    ifelse fishes-could-die
+    ;; If the parameter 'starving-death' is activated
+    ifelse starving-death
       [ die ]
       [ set energy 0 ]
   ]
@@ -489,20 +489,9 @@ SWITCH
 423
 167
 456
-fishes-could-die
-fishes-could-die
+starving-death
+starving-death
 1
-1
--1000
-
-SWITCH
-25
-456
-167
-489
-hungry-carnivorous
-hungry-carnivorous
-0
 1
 -1000
 
