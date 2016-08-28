@@ -35,7 +35,7 @@ to setup-fishes
   set-default-shape vegans "fish 2"
   create-vegans number-of-vegans [
     setxy random-xcor random-ycor
-    set energy 50
+    set energy birth-energy
     set age 0
     set size 2
     random-in-range-color 102
@@ -44,7 +44,7 @@ to setup-fishes
   set-default-shape carnivorous "fish"
   create-carnivorous number-of-carnivorous [
     setxy random-xcor random-ycor
-    set energy 50
+    set energy birth-energy
     set size 2.2
     set age 0
     random-in-range-color 14
@@ -128,7 +128,10 @@ end
 ;; Move the fishes
 to move-vegans
   ask vegans [
-    hunt-algae
+    ifelse energy < 25
+      [hunt-algae]
+      [walk-around]
+    forward 0.3
     move
     set vegans-track 60
   ]
@@ -137,6 +140,11 @@ end
 ;; Move the fishes
 to move-carnivorous
   ask carnivorous [
+    ifelse energy < 25
+      [hunt-vegans
+       forward 0.5]
+      [walk-around
+       forward 0.3]
     move
     set carnivorous-track 60
   ]
@@ -204,11 +212,13 @@ end
 
 ;; Move the fishes
 to move
-  ;; right random 50
-  ;; left random 50
   if not can-move? 1 [ rt 180 ]
-  forward 0.3
   set energy energy - 0.25
+end
+
+to walk-around
+  right random 50
+  left random 50
 end
 
 to hunt-algae
@@ -244,7 +254,7 @@ end
 to-report vegans-track-at-angle [angle]
   let p patch-right-and-ahead angle 1
   if p = nobody [ report 0 ]
-  report [algae-track] of p
+  report [vegans-track] of p
 end
 
 
@@ -262,6 +272,7 @@ to give-birth
       set energy (energy / 2)
       hatch 1 [
         set size 2
+        set energy birth-energy
         right random-float 360
         forward 1
       ]
@@ -359,7 +370,7 @@ number-of-vegans
 number-of-vegans
 1
 40
-10
+15
 1
 1
 NIL
@@ -374,7 +385,7 @@ max-fish-size
 max-fish-size
 1
 5
-4
+3.5
 0.1
 1
 NIL
@@ -389,7 +400,7 @@ energy-from-alga
 energy-from-alga
 0
 100
-40
+20
 1
 1
 NIL
@@ -471,7 +482,7 @@ energy-from-fish
 energy-from-fish
 0
 100
-20
+50
 1
 1
 NIL
