@@ -38,7 +38,7 @@ to setup-fishes
     set energy 50
     set age 0
     set size 2
-    set color 102 + random 4
+    random-in-range-color 102
   ]
 
   set-default-shape carnivorous "fish"
@@ -47,7 +47,7 @@ to setup-fishes
     set energy 50
     set size 2.2
     set age 0
-    set color 14 + random 4
+    random-in-range-color 14
   ]
 end
 
@@ -196,6 +196,10 @@ to check-death
 end
 
 ;; ##########################################################
+
+to random-in-range-color [initial-color]
+  set color initial-color + random 4
+end
 
 ;; Move the fishes
 to move
