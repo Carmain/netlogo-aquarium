@@ -1,8 +1,8 @@
 patches-own [
- ;; amount of traks on this patch
- carnivorous-trak
- vegans-trak
- algae-trak
+ ;; amount of tracks on this patch
+ carnivorous-track
+ vegans-track
+ algae-track
 
  chemical ;; Just for the show
 ]
@@ -88,30 +88,30 @@ to go
   move-vegans
 
   ask algae [
-    set algae-trak 60
+    set algae-track 60
   ]
 
   ask patches [
     ;; Slowly evaporate chemical. On each turn,
     ;; the patch loses "evaporation-rate" (in percent)
     ;; of the value of smell.
-    set carnivorous-trak carnivorous-trak * (100 - evaporation-rate) / 100
-    set vegans-trak vegans-trak * (100 - evaporation-rate) / 100
-    set algae-trak algae-trak * (100 - evaporation-rate) / 100
+    set carnivorous-track carnivorous-track * (100 - evaporation-rate) / 100
+    set vegans-track vegans-track * (100 - evaporation-rate) / 100
+    set algae-track algae-track * (100 - evaporation-rate) / 100
 
     ;; Reports a shade of "green" proportional to the value of "chemical".
     ;; If "chemical" is less than "0.1", then the darkest shade of color is chosen.
     ;; If "chemical" is greater than 5, then the lightest shade of color is chosen.
-    ;;set pcolor scale-color blue carnivorous-trak 0.1 5
+    ;;set pcolor scale-color blue carnivorous-track 0.1 5
   ]
 
   ;; Each patch diffuses "diffusion-rate / 100" of its variable
   ;; chemical to its neighboring 8 patches. Thus,
   ;; each patch gets 1/8 of 50% of the chemical
   ;; from each neighboring patch.)
-  diffuse vegans-trak (diffusion-rate / 100)
-  diffuse carnivorous-trak (diffusion-rate / 100)
-  diffuse algae-trak (diffusion-rate / 100)
+  diffuse vegans-track (diffusion-rate / 100)
+  diffuse carnivorous-track (diffusion-rate / 100)
+  diffuse algae-track (diffusion-rate / 100)
 
   if fishes-could-die [
     check-death
@@ -129,7 +129,7 @@ end
 to move-vegans
   ask vegans [
     move
-    set vegans-trak 60
+    set vegans-track 60
   ]
 end
 
@@ -137,7 +137,7 @@ end
 to move-carnivorous
   ask carnivorous [
     move
-    set carnivorous-trak 60
+    set carnivorous-track 60
   ]
 
 end
