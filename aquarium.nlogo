@@ -90,12 +90,26 @@ to go
   reproduce
 
   if not any? vegans or not any? carnivorous [ stop ]
-
   tick
 end
 
 
 to move-fishes
+  ;; Move the vegans fishes
+  ask vegans [
+    ifelse energy < 25
+      [
+        hunt-algae
+        eat-alga
+      ]
+      [ walk-around ]
+
+    forward 0.3
+    set vegans-track 60
+    if not can-move? 1 [ rt 180 ]
+    set energy energy - 0.25
+  ]
+
   ;; Move the carnivorous fishes
   ask carnivorous [
     ifelse energy < 25
@@ -108,23 +122,10 @@ to move-fishes
         walk-around
         forward 0.3
       ]
-    if not can-move? 1 [ rt 180 ]
-    effort-result
-  ]
 
-  ;; Move the vegans fishes
-  ask vegans [
-    ifelse energy < 25
-      [
-        hunt-algae
-        eat-alga
-      ]
-      [
-        walk-around
-      ]
-    forward 0.3
+    set carnivorous-track 60
     if not can-move? 1 [ rt 180 ]
-    effort-result
+    set energy energy - 0.25
   ]
 end
 
@@ -204,11 +205,6 @@ to walk-around
   left random 50
 end
 
-to effort-result
-  set energy energy - 0.25
-  set vegans-track 60
-end
-
 ;; The vegan fishes could eat algae, gain energy & grow
 to eat-alga
   ask vegans [
@@ -250,9 +246,7 @@ end
 
 ;; Make fishes grow
 to grow
-  if size < max-fish-size [
-    set size size + 0.1
-  ]
+  if size < max-fish-size [ set size size + 0.1 ]
 end
 
 ;; ##########################################################
