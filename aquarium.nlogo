@@ -117,8 +117,6 @@ to go
     check-death
   ]
   reproduce
-  eat-alga
-  eat-fish
 
   if not any? vegans or not any? carnivorous [ stop ]
   tick
@@ -129,7 +127,8 @@ end
 to move-vegans
   ask vegans [
     ifelse energy < 25
-      [hunt-algae]
+      [hunt-algae
+       eat-alga]
       [walk-around]
     forward 0.3
     move
@@ -142,7 +141,8 @@ to move-carnivorous
   ask carnivorous [
     ifelse energy < 25
       [hunt-vegans
-       forward 0.5]
+       forward 0.5
+       eat-fish]
       [walk-around
        forward 0.3]
     move
