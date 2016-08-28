@@ -11,7 +11,6 @@ breed [vegans vegan] ;; vegans fishes
 breed [carnivorous a-carnivorous] ;; carnivorous fishes
 breed [algae alga]
 
-
 vegans-own [energy age]
 carnivorous-own [energy age]
 
@@ -34,19 +33,15 @@ end
 to setup-fishes
   set-default-shape vegans "fish 2"
   create-vegans number-of-vegans [
-    setxy random-xcor random-ycor
-    set energy birth-energy
-    set age 0
+    basic-fishes-setup
     set size 2
     random-in-range-color 102
   ]
 
   set-default-shape carnivorous "fish"
   create-carnivorous number-of-carnivorous [
-    setxy random-xcor random-ycor
-    set energy birth-energy
+    basic-fishes-setup
     set size 2.2
-    set age 0
     random-in-range-color 14
   ]
 end
@@ -58,6 +53,12 @@ to setup-algae
     set color 63
     set size 2.3
    ]
+end
+
+to basic-fishes-setup
+  setxy random-xcor random-ycor
+  set energy birth-energy
+  set age 0
 end
 
 ;; ##########################################################
@@ -98,17 +99,11 @@ to go
     set carnivorous-track carnivorous-track * (100 - evaporation-rate) / 100
     set vegans-track vegans-track * (100 - evaporation-rate) / 100
     set algae-track algae-track * (100 - evaporation-rate) / 100
-
-    ;; Reports a shade of "green" proportional to the value of "chemical".
-    ;; If "chemical" is less than "0.1", then the darkest shade of color is chosen.
-    ;; If "chemical" is greater than 5, then the lightest shade of color is chosen.
-    ;;set pcolor scale-color blue carnivorous-track 0.1 5
   ]
 
   ;; Each patch diffuses "diffusion-rate / 100" of its variable
-  ;; chemical to its neighboring 8 patches. Thus,
-  ;; each patch gets 1/8 of 50% of the chemical
-  ;; from each neighboring patch.)
+  ;; chemical to its neighboring 8 patches. Thus, each patch gets
+  ;; 1/8 of 50% of the chemical from each neighboring patch.)
   diffuse vegans-track (diffusion-rate / 100)
   diffuse carnivorous-track (diffusion-rate / 100)
   diffuse algae-track (diffusion-rate / 100)
@@ -123,29 +118,39 @@ to go
 end
 
 
-;; Move the fishes
+;; Move the vegans fishes
 to move-vegans
   ask vegans [
     ifelse energy < 25
-      [hunt-algae
-       eat-alga]
-      [walk-around]
+      [
+        hunt-algae
+        eat-alga
+      ]
+      [
+        walk-around
+      ]
     forward 0.3
-    move
+    if not can-move? 1 [ rt 180 ]
+    set energy energy - 0.25
     set vegans-track 60
   ]
 end
 
-;; Move the fishes
+;; Move the carnivorous fishes
 to move-carnivorous
   ask carnivorous [
     ifelse energy < 25
-      [hunt-vegans
-       forward 0.5
-       eat-fish]
-      [walk-around
-       forward 0.3]
-    move
+      [
+        hunt-vegans
+        forward 0.5
+        eat-fish
+      ]
+      [
+        walk-around
+        forward 0.3
+      ]
+    if not can-move? 1 [ rt 180 ]
+    set energy energy - 0.25
     set carnivorous-track 60
   ]
 
@@ -194,8 +199,8 @@ to eat-fish
 end
 
 to reproduce
-  ask vegans [give-birth]
-  ask carnivorous [give-birth]
+  ask vegans [give-birth 2 102]
+  ask carnivorous [give-birth 2.2 14]
 end
 
 ;; If the energy if equals or below 0, the fish die
@@ -206,42 +211,36 @@ end
 
 ;; ##########################################################
 
+;; Set a random color from a range for the fishes
 to random-in-range-color [initial-color]
   set color initial-color + random 4
 end
 
-;; Move the fishes
-to move
-  if not can-move? 1 [ rt 180 ]
-  set energy energy - 0.25
-end
-
+;; If the fishes don't hunt, they need to go somewhere
 to walk-around
   right random 50
   left random 50
 end
-
 to hunt-algae
-  let scent-ahead algae-track-at-angle 0
-  let scent-right algae-track-at-angle 45
-  let scent-left  algae-track-at-angle -45
-  if (scent-right > scent-ahead) or (scent-left > scent-ahead)
-  [
-    ifelse scent-right > scent-left
-      [ rt 45 ]
-      [ lt 45 ]
-  ]
+  let track-ahead algae-track-at-angle 0
+  let track-right algae-track-at-angle 45
+  let track-left algae-track-at-angle -45
+  fix-position-with-tracks track-left track-ahead track-right
 end
 
 to hunt-vegans
-  let scent-ahead vegans-track-at-angle 0
-  let scent-right vegans-track-at-angle 45
-  let scent-left  vegans-track-at-angle -45
-  if (scent-right > scent-ahead) or (scent-left > scent-ahead)
+  let track-ahead vegans-track-at-angle 0
+  let track-right vegans-track-at-angle 45
+  let track-left vegans-track-at-angle -45
+  fix-position-with-tracks track-left track-ahead track-right
+end
+
+to fix-position-with-tracks [track-left track-ahead track-right]
+  if (track-right > track-ahead) or (track-left > track-ahead)
   [
-    ifelse scent-right > scent-left
-      [ rt 45 ]
-      [ lt 45 ]
+    ifelse track-right > track-left
+      [ right 45 ]
+      [ left 45 ]
   ]
 end
 
@@ -266,12 +265,13 @@ to grow
   ]
 end
 
-to give-birth
+to give-birth [initial-size initial-color]
   if size >= max-fish-size  [
     if random-float 100 < 3 [
       set energy (energy / 2)
       hatch 1 [
-        set size 2
+        set size initial-size
+        random-in-range-color initial-color
         set energy birth-energy
         right random-float 360
         forward 1
@@ -385,7 +385,7 @@ max-fish-size
 max-fish-size
 1
 5
-3.5
+3.3
 0.1
 1
 NIL
