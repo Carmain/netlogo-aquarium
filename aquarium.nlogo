@@ -128,6 +128,7 @@ end
 ;; Move the fishes
 to move-vegans
   ask vegans [
+    hunt-algae
     move
     set vegans-track 60
   ]
@@ -203,12 +204,49 @@ end
 
 ;; Move the fishes
 to move
-  right random 50
-  left random 50
+  ;; right random 50
+  ;; left random 50
   if not can-move? 1 [ rt 180 ]
   forward 0.3
   set energy energy - 0.25
 end
+
+to hunt-algae
+  let scent-ahead algae-track-at-angle 0
+  let scent-right algae-track-at-angle 45
+  let scent-left  algae-track-at-angle -45
+  if (scent-right > scent-ahead) or (scent-left > scent-ahead)
+  [
+    ifelse scent-right > scent-left
+      [ rt 45 ]
+      [ lt 45 ]
+  ]
+end
+
+to hunt-vegans
+  let scent-ahead vegans-track-at-angle 0
+  let scent-right vegans-track-at-angle 45
+  let scent-left  vegans-track-at-angle -45
+  if (scent-right > scent-ahead) or (scent-left > scent-ahead)
+  [
+    ifelse scent-right > scent-left
+      [ rt 45 ]
+      [ lt 45 ]
+  ]
+end
+
+to-report algae-track-at-angle [angle]
+  let p patch-right-and-ahead angle 1
+  if p = nobody [ report 0 ]
+  report [algae-track] of p
+end
+
+to-report vegans-track-at-angle [angle]
+  let p patch-right-and-ahead angle 1
+  if p = nobody [ report 0 ]
+  report [algae-track] of p
+end
+
 
 
 ;; Make fishes grow
