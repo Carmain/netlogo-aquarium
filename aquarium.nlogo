@@ -1,10 +1,8 @@
 patches-own [
- ;; amount of tracks on this patch
- carnivorous-track
- vegans-track
- algae-track
-
- chemical ;; Just for the show
+  ;; amount of tracks on this patch
+  carnivorous-track
+  vegans-track
+  algae-track
 ]
 
 breed [ vegans vegan ] ;; vegans fishes
