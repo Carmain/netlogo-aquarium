@@ -17,72 +17,113 @@ Ce dernier sera aussi accompagné de petits films permettant de démontrer les d
 
 ## La construction du projet
 
-### Etape 1 : Créer un environnement viable
-
-#### Premiers pas dans l'aquarium, les végétariens et les algues
-
-#### Définition de l'aquarium
+### Setup de l'aquarium et de l'environnement
 
 L'aquarium sera le terrain dans lequel les poissons évolueront.
-Ce terrain est tapissé de gravier non comestible pour les animaux y vivant mais où y pousse des algues.
-Ici, les algues seront symbolisés par des carrés verts et les graviers par des carrés gris.
+Ce terrain est tapissé de gravier symbolisé par des patches de couleur grise.
 
-Le code suivant permet la définition du sol ainsi que l'apparition d'un nombre d'algues définis par un slider.
+Le code ci-dessous permet la définition de ce qu'est un patch et de lui attribuer trois variables permettant de stocker une valeur numérique.
+L'avantage est que chaque patche garde en mémoire la trace de passage des agents poissons ainsi que la proximité des agents algues.
+
+A noter ici qu'il a été décidé de désactiver les paramètres `World wraps horizontally` & `World wraps vertically` afin
+```
+patches-own [
+  ;; amount of tracks on this patch
+  carnivorous-track
+  vegans-track
+  algae-track
+]
+```
+
+Vient ensuite la définition des différents agents. Chaque agent est nommé afin de les manipuler plus facilement et explicitement dans le code.
+Les poissons végétariens et carnivores possèdent aussi un attribut `energy` utilisé par la suite pour moduler leurs cycles de vie.
+
+```
+breed [ vegans vegan ] ;; vegans fishes
+breed [ carnivorous a-carnivorous ] ;; carnivorous fishes
+breed [ algae alga ]
+
+vegans-own [ energy age ]
+carnivorous-own [ energy age ]
+```
+
+La fonction `setup` quand à elle s'occupe d'appeler un ensemble de procédures afin d'initaliser l'environnement.
+Elle est appelé dans l'interface via le bouton `Setup`. Quelques précisions cependant :
+ * `clear-all` permet de remettre à zéro l'environnement pour une nouvelle instatiation
+ * `reset-ticks`permet grossièrement de remettre le compteur de cyle à zéro.
 
 ```
 to setup
   clear-all
   setup-background
+  setup-algae
+  setup-fishes
   reset-ticks
 end
+```
 
-;; Setup the color of the background (gravels)
+#### Initialisation du décors et du terrain
+
+L'initialisation du terrain et des patchs de fait via la méthode `setup-background`.
+Cette méthode recouvre le monde de patches de variate de gris. Ces patches pourront par la suite interragir avec les agents les parcourants.
+
+```
 to setup-background
   ask patches [
     set pcolor grey + (random-float 0.8) - 0.4
   ]
 end
-
-
-
-to go
-  grow-alga
-  tick
-end
-
-;; Grows a number of algae defined by a slider
-to grow-alga
-  ask patches [
-    if count(patches with [pcolor = green]) < number-of-alga [
-      if random 100 > 3 [
-        set pcolor green
-      ]
-    ]
-  ]
-end
 ```
 
-#### Apparition des végératiens
+#### Initialisation des agents
+Trois types d'agents existent, répartis selon une chaîne alimentaire en pyramide :
+ * Sur le plus bas niveau et en plus grande quantité à l'initalisation, nous allons retrouver la nourriture végétale représenté par des agents en forme d'algue de couleur verte.
+ * Au second niveau, ce sont les poissons végétariens se nourrissant d'algues. Ces derniers sont en nuance de bleu.
+ * Enfin au sommet de la pyramide nous retrouvons les carnivores, représenté par des poissons en nuance de rouge dont la forme diffère des végétariens.
 
-##### Déplacements
-
-Afin de les manipuler le plus facilement possible, nous allons nommer nos tortues végératiens à l'aide de `breed` :
+initialisation des algues sur le terrain :
+Le nombre d'algues peut être défini par le slider `number-of-algae` dans l'interface du programme. Au setup, ce nombre est réprti de manière aléatoire sur le terrain.
 ```
-breed [vegans vegan] ;; vegans fishes
-```
-
-Une procédure appelée dans `setup` permet ensuite leur initialisation avec un nombre défini selon un slider :
-
-```
-to setup-vegan-fishes
-  create-vegans number-of-vegan
-  set-default-shape vegans "fish"
-  ask vegans [
+to setup-algae
+  set-default-shape algae "plant"
+  create-algae number-of-algae [
     setxy random-xcor random-ycor
-    set color blue
+    set color 63
+    set size 2.3
   ]
 end
 ```
+
+Initialisation des agents poissons :
+Ici, le programme s'occupe de créer les deux sortes de poissons disponibles. Ces derniers se distinguent facilement par la couleur,
+la forme et la taille de départ légèrement plus grande pour les carnivores. Ces derniers sont répartis eux aussi aléatoirement sur la carte.
+```
+to setup-fishes
+  set-default-shape vegans "fish 2"
+  create-vegans number-of-vegans [
+    basic-fishes-setup
+    set size 2
+    random-in-range-color 102
+  ]
+
+  set-default-shape carnivorous "fish"
+  create-carnivorous number-of-carnivorous [
+    basic-fishes-setup
+    set size 2.2
+    random-in-range-color 14
+  ]
+end
+
+to basic-fishes-setup
+  setxy random-xcor random-ycor
+  set energy birth-energy
+  set age 0
+end
+```
+
+### Gestion des déplacement des agents & recherche de nourriture
+
+#### Déplacements
 
 Leurs déplacements sont regulés via une autre procédure appelée dans `go` :
 ```
@@ -99,8 +140,6 @@ to move
   forward 1
 end
 ```
-
-##### Recherche de nourriture & reproduction
 
 Le comportement des poissons se défini de la sorte :
  * A chaque repas, le poisson gagne de l'énergie
@@ -146,7 +185,7 @@ to check-death
 end
 ```
 
-## Valeurs par défaut pour les paramètres :
+### Valeurs par défaut pour les paramètres :
 
 | Titre                          | paramètre          | valeur |
 |--------------------------------|--------------------|--------|
@@ -156,6 +195,9 @@ end
 | Croissance des poissons        | `fish-grow`        | 0.1    |
 | Energie venant des algues      | `enery-from-alga`  | 40     |
 | Energie à la naissance         | `birth-enery`      | 50     |
+
+## Définition des modèles des agents
+
 ## A propos du carnet de bord en vidéo :
 
 Chaque étape conséquence a été pris en vidéo afin de garder des traces de l'avancement du projet.
