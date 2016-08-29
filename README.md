@@ -156,3 +156,30 @@ end
 | Croissance des poissons        | `fish-grow`        | 0.1    |
 | Energie venant des algues      | `enery-from-alga`  | 40     |
 | Energie à la naissance         | `birth-enery`      | 50     |
+## A propos du carnet de bord en vidéo :
+
+Chaque étape conséquence a été pris en vidéo afin de garder des traces de l'avancement du projet.
+
+La capture de vidéo peux se faire après le **setup** en cliquant sur le bouton **Record**.
+Ce dernier appellera ensuite la fonction `make-movie` dont le code est le suivant :
+
+```
+to make-movie
+  ;; prompt user for movie location
+  user-message "First, save your new movie file (choose a name ending with .mov)"
+  let path user-new-file
+  if not is-string? path [ stop ]  ;; stop if user canceled
+
+  ;; run the model
+  setup
+  movie-start path
+  while [ticks < 500] [
+    movie-grab-view
+    go
+  ]
+
+  ;; Stop and export the movie
+  movie-close
+  user-message (word "Exported movie to " path)
+end
+```
