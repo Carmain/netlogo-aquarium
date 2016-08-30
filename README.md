@@ -143,50 +143,104 @@ to go
 end
 ```
 
-#### Déplacements
+#### Déplacements & recherche de nourriture
 
-Le déplacement des poissons se défini de la sorte :
- * A chaque repas, le poisson gagne de l'énergie
- * Manger le fait aussi grandir jusqu'à obtenir sa taille maximale
- * Si le poisson est suffisament grand, il obtient la capacité de se reproduire
- * Si le poisson a suffisament d'énergie pour se reproduire, il le fait (la reproduction cependant lui en fait perdre).
- * Si le poisson n'a plus d'énergie, il meurt.
-
-Le poisson grandi et gagne de l'énergie à chaque repas :
+Le déplacement des agens végétatiens & carnivores se fait via la procédure `move-fishes`:
 ```
-to eat-alga
+to move-fishes
+  ;; Move the vegans fishes
   ask vegans [
-    if pcolor = green [
-      display-gravels
-      set energy (energy + energy-from-alga)
-      grow
-    ]
+    ifelse energy < 25
+      [
+        hunt-algae
+        eat-alga
+      ]
+      [ walk-around ]
+
+    forward 0.3
+    set vegans-track 60
+    if not can-move? 1 [ rt 180 ]
+    set energy energy - 0.25
+  ]
+
+  ;; Move the carnivorous fishes
+  ask carnivorous [
+    ifelse energy < 25
+      [
+        hunt-vegans
+        forward 0.5
+        eat-fish
+      ]
+      [
+        walk-around
+        forward 0.3
+      ]
+
+    set carnivorous-track 60
+    if not can-move? 1 [ rt 180 ]
+    set energy energy - 0.25
   ]
 end
 ```
+
+Le comportement des deux familles de poissons est quasiment indentique à un détail près que nous expliciterons par la suite.
+
+Si le poisson a suffisament d'énergie (au dessus de 25 points), ce dernier ne fera de circuler dans l'aquarium, simulé par la méthode `walk-around`.
+Cette dernière ne sert juste qu'à donner une direction aléatoire au poisson.
+```
+to walk-around
+ right random 50
+ left random 50
+end
+```
+
+Si le poisson au contraire commence à s'affamer, il va partir en chasse à la recherche de nourriture via les méthodes `hunt-algae` & `hunt-vegans`
+respectivement pour les hebivores & les carnivores.
+
+La chasse va se constituer à la recherche des patches à droite, à gauche et en face du poissons contenant la valeur la plus haute de la trace recherché,
+à savoir `algae-tracks` pour les végétariens et `vegans-track` pour les carnivores.
+Ici n'est présenté que la fonction pour la recherche d'algues, cependant les carnivores ont un comportement similaire décrit dans le code d'une manière quasiment indentique.
+
+Le résultat de cette recherche oriente dont l'agent vers la trace la plus forte. C'est ensuite dans la fonction `move-fishes` qu'un `forward` est fait pour le faire avancer.
+Une différence est à souligner entre les deux familles, si les carnivores repèrent une trace, ces derniers se déplacent plus rapidement pour rattraper leur proie.
+
+```
+to hunt-algae
+  let track-ahead algae-track-at-angle 0
+  let track-right algae-track-at-angle 45
+  let track-left algae-track-at-angle -45
+  fix-position-with-tracks track-left track-ahead track-right
+end
+
+;; Adjust the position of the fish when it found some tracks
+to fix-position-with-tracks [track-left track-ahead track-right]
+  if (track-right > track-ahead) or (track-left > track-ahead)
+  [
+    ifelse track-right > track-left
+      [ right 45 ]
+      [ left 45 ]
+  ]
+end
+
+to-report vegans-track-at-angle [angle]
+  let p patch-right-and-ahead angle 1
+  if p = nobody [ report 0 ]
+  report [ vegans-track ] of p
+end
+```
+
+#### Diffusion des traces
+
+#### Reproduction des poissons
 
 Si le poisson est suffisament grand, il peux se reproduire. De plus, la reproduction coûte de l'énergie :
 ```
-to reproduce
-  ask vegans [
-    if energy > birth-energy and size >= max-fish-size  [
-      set energy energy - birth-energy
-      hatch 1 [
-        set energy birth-energy
-        set size 1
-      ]
-    ]
-  ]
-end
 ```
+
+#### Décès des poissons
 
 Si le poisson n'a plus d'énergie, il meurt :
 ```
-to check-death
-  ask vegans [
-    if energy <= 0 [ die ]
-  ]
-end
 ```
 
 ### Valeurs par défaut pour les paramètres :
