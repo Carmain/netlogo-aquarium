@@ -97,6 +97,7 @@ end
 Initialisation des agents poissons :
 Ici, le programme s'occupe de créer les deux sortes de poissons disponibles. Ces derniers se distinguent facilement par la couleur,
 la forme et la taille de départ légèrement plus grande pour les carnivores. Ces derniers sont répartis eux aussi aléatoirement sur la carte.
+Enfin, l'énergie attribué à la naissance est fixé arbitrairement par l'attribut dont la valeur est fixé par le slider `birth-energy`.
 ```
 to setup-fishes
   set-default-shape vegans "fish 2"
@@ -123,25 +124,28 @@ end
 
 ### Gestion des déplacement des agents & recherche de nourriture
 
+La mise en mouvement du projet est effectué via un ensemble de procédures dans `go`.
+Cette méthode peut être appelée via l'interface avec le bouton `Go`.
+
+Avant de passer aux différentes procéure régissant le comportement des agents,
+il convient d'expliquer cette ligne : `if not any? vegans or not any? carnivorous [ stop ]`.
+Cette dernière permet d'arrêter le programme si toute la famille des carnivores ou des herbivores venait à disparaître.
+
+```
+to go
+  move-fishes
+  set-tracks
+  check-death
+  reproduce
+
+  if not any? vegans or not any? carnivorous [ stop ]
+  tick
+end
+```
+
 #### Déplacements
 
-Leurs déplacements sont regulés via une autre procédure appelée dans `go` :
-```
-to move-vegan-fish
-  ask vegans [
-    move
-  ]
-end
-
-
-to move
-  right random 50
-  left random 50
-  forward 1
-end
-```
-
-Le comportement des poissons se défini de la sorte :
+Le déplacement des poissons se défini de la sorte :
  * A chaque repas, le poisson gagne de l'énergie
  * Manger le fait aussi grandir jusqu'à obtenir sa taille maximale
  * Si le poisson est suffisament grand, il obtient la capacité de se reproduire
