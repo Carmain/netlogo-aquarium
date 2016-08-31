@@ -229,6 +229,65 @@ to-report vegans-track-at-angle [angle]
 end
 ```
 
+Enfin, si la chasse se révèle efficace, le poisson mange sa proie.
+
+
+`eat-alga` est la procédure appelée par les végétariens.
+Si une proie se trouve dans un radius de 1 autour de lui, elle est mangé et disparait du monde.
+En récompense, le prédateur gagne de l'énergie selon le slider `energy-from-alga` défini dans l'interface
+```
+to eat-alga
+  ask vegans [
+    let food-eaten false
+    ask algae in-radius 1 [
+      hatch 1 [ setxy random-xcor random-ycor ]
+      set food-eaten true
+      die
+    ]
+
+    if food-eaten [
+      ;; Gain energy from food
+      set energy energy + energy-from-alga
+      grow
+    ]
+  ]
+end
+```
+
+`eat-fish` est la procédure appelée par les carnivores.
+Même chose que précédemment, si une proie se trouve dans un radius de 1 autour de lui, elle est mangé et disparait du monde.
+En récompense, le prédateur gagne de l'énergie selon le slider `energy-from-fish` défini dans l'interface multiplié par le nombre de végératiens mangés (les carnivores sont très voraces !).
+```
+to eat-fish
+  ask carnivorous [
+    let carnivorous-size size
+    let energy-gained 0
+    let vegan-eaten 0
+    let food-eaten false
+    ask vegans in-radius 1 [
+      set vegan-eaten vegan-eaten + 1
+      set energy-gained energy-from-fish * vegan-eaten
+      set food-eaten true
+      die
+    ]
+
+    if food-eaten [
+      ;; Gain energy from food
+      set energy energy + energy-gained
+      grow
+    ]
+  ]
+end
+```
+
+Enfin, manger de la nourriture fait grandir les poissons via la procédure `grow` jusqu'à atteindre une taille limite défini par le slider `max-fish-size`.
+
+```
+to grow
+  if size < max-fish-size [ set size size + 0.1 ]
+end
+```
+
 #### Diffusion des traces
 
 #### Reproduction des poissons
