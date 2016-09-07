@@ -342,10 +342,10 @@ NIL
 1
 
 SLIDER
-6
-56
-178
-89
+13
+68
+185
+101
 number-of-algae
 number-of-algae
 0
@@ -357,10 +357,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-6
-89
-178
-122
+13
+101
+185
+134
 number-of-vegans
 number-of-vegans
 1
@@ -372,10 +372,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-7
-165
-179
-198
+13
+182
+185
+215
 max-fish-size
 max-fish-size
 1
@@ -422,9 +422,9 @@ PENS
 
 SLIDER
 14
-335
+367
 186
-368
+400
 birth-energy
 birth-energy
 0
@@ -453,10 +453,10 @@ NIL
 1
 
 SLIDER
-6
-122
-178
-155
+13
+134
+185
+167
 number-of-carnivorous
 number-of-carnivorous
 0
@@ -469,9 +469,9 @@ HORIZONTAL
 
 SLIDER
 14
-368
+334
 186
-401
+367
 energy-from-fish
 energy-from-fish
 0
@@ -494,10 +494,10 @@ starving-death
 -1000
 
 SLIDER
-7
-200
-179
-233
+13
+217
+185
+250
 diffusion-rate
 diffusion-rate
 0
@@ -509,10 +509,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-7
-233
-179
-266
+13
+250
+185
+283
 evaporation-rate
 evaporation-rate
 0
