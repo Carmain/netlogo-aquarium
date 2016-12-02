@@ -44,12 +44,12 @@ Les plantes peuvent aussi adopter cette demande.
 | paramètre               | valeur |
 |-------------------------|--------|
 | `number-of-algae`       | 50     |
-| `number-of-vegans`      | 10     |
-| `number-of-carnivorous` | 10     |
-| `max-fish-size`         | 2      |
-| `diffusion-rate`        | 2      |
-| `evaporation-rate`      | 2      |
-| `enery-from-alga`       | 40     |
-| `enery-from-fish`       | 40     |
+| `number-of-vegans`      | 15     |
+| `number-of-carnivorous` | 2      |
+| `max-fish-size`         | 3.3    |
+| `diffusion-rate`        | 20     |
+| `evaporation-rate`      | 10     |
+| `enery-from-alga`       | 20     |
+| `enery-from-fish`       | 50     |
 | `birth-enery`           | 50     |
 | `starving-death`        | Off    |
